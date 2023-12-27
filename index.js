@@ -13,6 +13,8 @@ const SCOPES = [
 
 const labelName = "Vacation-Mails";
 
+let gmail; // Define gmail in a broader scope
+
 // Function to handle Gmail authentication
 async function authenticateGmail() {
   try {
@@ -30,7 +32,7 @@ async function authenticateGmail() {
 async function getUnrepliesMessages(auth) {
   try {
     console.log('Function getUnrepliesMessages got hit');
-    const gmail = google.gmail({ version: "v1", auth });
+    gmail = google.gmail({ version: "v1", auth });
     const response = await gmail.users.messages.list({
       userId: "me",
       labelIds: ["INBOX"],
@@ -46,7 +48,6 @@ async function getUnrepliesMessages(auth) {
 // Function to add a label to a message
 async function addLabel(auth, message, labelId) {
   try {
-    const gmail = google.gmail({ version: 'v1', auth });
     await gmail.users.messages.modify({
       userId: 'me',
       id: message.id,
@@ -65,7 +66,7 @@ async function addLabel(auth, message, labelId) {
 async function createLabel(auth) {
   try {
     console.log('Function createLabel got hit');
-    const gmail = google.gmail({ version: "v1", auth });
+    gmail = google.gmail({ version: "v1", auth }); // Set gmail in the broader scope
     const response = await gmail.users.labels.create({
       userId: "me",
       requestBody: {
@@ -95,7 +96,6 @@ async function createLabel(auth) {
 async function sendReply(auth, message) {
   try {
     console.log('Function sendReply got hit');
-    const gmail = google.gmail({ version: 'v1', auth });
     const res = await gmail.users.messages.get({
       userId: 'me',
       id: message.id,
@@ -114,7 +114,7 @@ async function sendReply(auth, message) {
     const replyTo = matchResult ? matchResult[1] : from; // Use from if the match is null
 
     const replySubject = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
-    const replyBody = `Hi, \n\nI'm currently on vacation and will get back to you soon.\n\n Best, \nNithish Kumar `;
+    const replyBody = `Hi, \n\nI'm currently on vacation and will get back to you soon.\n\n Best, \nNithish Kumar`;
     const rawMessage = [
       `From: me`,
       `To: ${replyTo}`,
